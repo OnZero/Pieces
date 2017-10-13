@@ -18,6 +18,15 @@
         android:text="@string/reset"/>
 
     <TextView
+        android:id="@+id/tv_trap_xy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_toRightOf="@id/btn_reset"
+        android:textSize="16sp"
+        android:text="陷阱坐标"/>
+
+    <TextView
         android:id="@+id/tv_trap_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

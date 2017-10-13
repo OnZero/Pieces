@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
-    private TextView tvTrapCount,tvStepCount;
+    private TextView tvTrapCount,tvStepCount,tvTrapXY;
     private Button btnStart,btnReSet;
     private Random random;
     //陷阱的个数
@@ -37,9 +37,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //是否踩中陷阱
     private boolean isDel;
     //陷阱的X坐标
-    private int[] coordX = new int[100];
+    private int[] coordX;
     //陷阱的Y坐标
-    private int[] coordY = new int[100];
+    private int[] coordY;
     //步数
     private int mStepCount = 0;
 
@@ -81,14 +81,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void randomTrap() {
         //随机产生陷阱数N个
-        mTrap = random.nextInt(10*10);
+        mTrap = random.nextInt(9);
         ThreadManager.getInstance().execute(new Runnable() {
             @Override
             public void run() {
                 int count=0;
                 while (count<mTrap+1){
-                    int x = random.nextInt(100);
-                    int y = random.nextInt(100);
+                    //随机产生陷阱的X Y坐标
+                    int x = random.nextInt(3);
+                    int y = random.nextInt(3);
                     if(x == 0 && y==0)
                         continue;
                     if(count == 0){
@@ -116,11 +117,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initEnd() {
         tvTrapCount.setText("陷阱的个数:"+String.valueOf(mTrap+1));
         StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append("陷阱的坐标有："+"\n");
+        stringBuffer.append("3*3棋盘陷阱的坐标有："+"\n");
         for(int i=0;i<trap.size();i++){
             stringBuffer.append(trap.get(i));
         }
-        tvStepCount.setText(stringBuffer);
+        tvTrapXY.setText(stringBuffer);
+        if(coordX == null)
+            coordX = new int[mTrap+1];
+        if(coordY == null)
+            coordY = new int[mTrap+1];
         for(int i=0;i<trap.size();i++){
             coordX[i] = Integer.parseInt(trap.get(i).substring(1, trap.get(i).length() - 1).split("，")[0]);
             coordY[i] = Integer.parseInt(trap.get(i).substring(1,trap.get(i).length()-1).split("，")[1]);
@@ -128,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
+        tvTrapXY = (TextView) findViewById(R.id.tv_trap_xy);
         tvTrapCount = (TextView) findViewById(R.id.tv_trap_count);
         tvStepCount = (TextView) findViewById(R.id.tv_step_count);
         btnReSet = (Button) findViewById(R.id.btn_reset);
@@ -141,12 +147,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.btn_reset:
-                if(trap !=null)
-                    trap.clear();
-                mHandler.removeMessages(101);
-                randomTrap();
-                break;
+//            case R.id.btn_reset:
+//                if(trap !=null)
+//                    trap.clear();
+//                mHandler.removeMessages(101);
+//                currentX = 0;
+//                currentY = 0;
+//                randomTrap();
+//                break;
             case R.id.btn_start:
                 calculateStep();
                 break;
@@ -160,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mHandler.sendEmptyMessage(101);
             return;
         }
-        if(currentX == 10 && mChessAction == RIGHT){
+        if(currentX == 2 && mChessAction == RIGHT){
             mHandler.sendEmptyMessage(101);
             return;
         }
@@ -168,27 +176,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mHandler.sendEmptyMessage(101);
             return;
         }
-        if(currentY == 10 && mChessAction == DOWN){
+        if(currentY == 2 && mChessAction == DOWN){
             mHandler.sendEmptyMessage(101);
             return;
         }
         Toast.makeText(MainActivity.this,"目前的坐标是"+currentX+"，"+currentY,Toast.LENGTH_SHORT).show();
         switch (mChessAction){
             case UP:
-                currentY = currentY-1;
                 Toast.makeText(MainActivity.this,"棋子将往上移动",Toast.LENGTH_SHORT).show();
+                currentY = currentY-1;
                 break;
             case LEFT:
-                currentX = currentX-1;
                 Toast.makeText(MainActivity.this,"棋子将往左移动",Toast.LENGTH_SHORT).show();
+                currentX = currentX-1;
                 break;
             case DOWN:
-                currentY = currentY+1;
                 Toast.makeText(MainActivity.this,"棋子将往下移动",Toast.LENGTH_SHORT).show();
+                currentY = currentY+1;
                 break;
             case RIGHT:
-                currentX = currentX+1;
                 Toast.makeText(MainActivity.this,"棋子将往右移动",Toast.LENGTH_SHORT).show();
+                currentX = currentX+1;
                 break;
         }
         for(int i=0;i<coordX.length;i++){
