@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
     private TextView tvTrapCount,tvStepCount,tvTrapXY;
@@ -162,6 +164,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void route() {
+        if(isDel){
+            currentX = 0;
+            currentY = 0;
+            mStepCount = 0;
+        }
         //棋子的随机动作
         mChessAction = random.nextInt(4);
         if(currentY == 0 && mChessAction == UP){
@@ -199,18 +206,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 currentX = currentX+1;
                 break;
         }
-        for(int i=0;i<coordX.length;i++){
-            if(currentX == coordX[i]){
-                for(int j=0;j<coordY.length;j++){
-                    if(currentY == coordY[j]){
-                        isDel = true;
-                    }
-                }
+//        for(int i=0;i<coordX.length;i++){
+//            if(currentX == coordX[i]){
+//                for(int j=0;j<coordY.length;j++){
+//                    if(currentY == coordY[j]){
+//                        isDel = true;
+//                    }
+//                }
+//            }
+//        }
+        String current = "("+String.valueOf(currentX)+"，"+String.valueOf(currentY)+")";
+        for(int i=0;i<trap.size();i++){
+            if(current.equals(trap.get(i))){
+                isDel = true;
             }
         }
         mHandler.removeMessages(101);
         if(isDel){
-            Toast.makeText(MainActivity.this,"在"+currentX+"，"+currentY+"踩入陷阱了,走了"+String.valueOf(mStepCount)+"步",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,"在"+currentX+"，"+currentY+"踩入陷阱了,走了"+String.valueOf(mStepCount)+"步,"+"走第"+mStepCount+"步时落入陷阱",Toast.LENGTH_SHORT).show();
+            Log.e("IN",String.valueOf(mStepCount));
             tvStepCount.setText("走了"+String.valueOf(mStepCount)+"步");
         }else{
             mHandler.sendEmptyMessageDelayed(101,1000);
