@@ -215,9 +215,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                }
 //            }
 //        }
-        String current = "("+String.valueOf(currentX)+"，"+String.valueOf(currentY)+")";
+        //移动后的坐标匹配 陷阱坐标  匹配成功则结束移动
+        String currentXY = "("+String.valueOf(currentX)+"，"+String.valueOf(currentY)+")";
         for(int i=0;i<trap.size();i++){
-            if(current.equals(trap.get(i))){
+            if(currentXY.equals(trap.get(i))){
                 isDel = true;
             }
         }
